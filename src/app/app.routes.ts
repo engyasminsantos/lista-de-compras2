@@ -1,9 +1,12 @@
+// src/app/app.routes.ts
 import { Routes } from '@angular/router';
-import { LoginComponent } from './auth/login.component'; // Verifique se o caminho está correto
-import { ShoppingListComponent } from './shopping-list/shopping-list.component'; // Verifique se o caminho está correto
+import { LoginComponent } from './auth/login.component';
+import { ShoppingListComponent } from './shopping-list/shopping-list.component';
+import { AuthGuard } from '/Users/iaquine/Downloads/listaprojeto/lista-compras/src/app/auth/auth.guard';
 
-export const appRoutes: Routes = [
+export const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: 'shopping-list', component: ShoppingListComponent },
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'shopping-list', component: ShoppingListComponent, canActivate: [AuthGuard] },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '**', redirectTo: 'login' }
 ];

@@ -1,14 +1,4 @@
-<div>
-  <h2>Login</h2>
-  <form (ngSubmit)="login()">
-    <div>
-      <label for="username">Username:</label>
-      <input type="text" id="username" [(ngModel)]="username" name="username" required>
-    </div>
-    <div>
-      <label for="password">Password:</label>
-      <input type="password" id="password" [(ngModel)]="password" name="password" required>
-    </div>
-    <button type="submit">Login</button>
-  </form>
-</div>
+<!-- src/app/auth/login.component.html -->
+<button (click)="onLogin()">Login com Google</button>
+<button (click)="onLogout()">Logout</button>
+

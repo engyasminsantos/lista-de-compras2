@@ -1,45 +1,41 @@
+// src/app/auth/auth.guard.ts
+
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { GoogleAuthProvider, signInWithPopup, getAuth, signOut, User } from 'firebase/auth';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-  private isAuthenticatedStatus: boolean = false; // Status da autenticação
+  private auth = getAuth();
+  private user: User | null = null;
 
   constructor(private router: Router) {}
 
-  // Verifica se o usuário está autenticado
-  isAuthenticated(): boolean {
-    // Aqui verificamos se existe um token de autenticação no localStorage
-    const token = localStorage.getItem('authToken');
-    this.isAuthenticatedStatus = !!token; // Atualiza o status da autenticação
-    return this.isAuthenticatedStatus; // Retorna verdadeiro ou falso
-  }
-
-  // Método de login que simula autenticação
-  login(username: string, password: string): void {
-    // Aqui você implementaria a lógica de autenticação real, como uma chamada a uma API
-    // Para o exemplo, vamos simular uma autenticação bem-sucedida
-    if (username === 'user' && password === 'password') { // Simulação simples
-      localStorage.setItem('authToken', 'token'); // Armazena um token fictício
-      this.isAuthenticatedStatus = true; // Atualiza o status da autenticação
-      this.router.navigate(['/shopping-list']); // Redireciona para a lista de compras
-    } else {
-      // Lógica para lidar com falha de autenticação
-      alert('Login falhou. Usuário ou senha inválidos.'); // Exibe um alerta simples
+  async loginWithGoogle(): Promise<void> {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(this.auth, provider);
+      this.user = result.user;
+      this.router.navigate(['/lista-compras']);
+    } catch (error) {
+      console.error('Erro ao autenticar com Google:', error);
     }
   }
 
-  // Navega para a página de login
-  navigateToLogin() {
-    this.router.navigate(['/login']);
+  logout(): void {
+    signOut(this.auth).then(() => {
+      this.user = null;
+      this.router.navigate(['/login']);
+    });
   }
 
-  // Método para fazer logout
-  logout(): void {
-    localStorage.removeItem('authToken'); // Remove o token do localStorage
-    this.isAuthenticatedStatus = false; // Atualiza o status da autenticação
-    this.router.navigate(['/login']); // Redireciona para a página de login
+  isAuthenticated(): boolean {
+    return this.user != null;
+  }
+
+  getUser(): User | null {
+    return this.user;
   }
 }

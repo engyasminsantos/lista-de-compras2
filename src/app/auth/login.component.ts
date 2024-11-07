@@ -1,5 +1,7 @@
+// src/app/auth/login.component.ts
 import { Component } from '@angular/core';
-import { AuthService } from './auth.service';
+import { Router } from '@angular/router';
+import { LoginService } from '../login/login.service'; // Caminho corrigido
 
 @Component({
   selector: 'app-login',
@@ -7,12 +9,21 @@ import { AuthService } from './auth.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  username: string = ''; // Inicialize com uma string vazia
-  password: string = ''; // Inicialize com uma string vazia
+  constructor(private loginService: LoginService, private router: Router) {}
 
-  constructor(private authService: AuthService) {}
+  onLogin() {
+    this.loginService.loginWithGoogle()
+      .then(() => {
+        this.router.navigate(['/shopping-list']);
+      })
+      .catch((error: any) => {
+        console.error('Erro ao fazer login com Google:', error);
+      });
+  }
 
-  login() {
-    this.authService.login(this.username, this.password); // Passando username e password
+  onLogout() {
+    this.loginService.logout().then(() => {
+      this.router.navigate(['/login']);
+    });
   }
 }
